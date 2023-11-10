@@ -1,28 +1,11 @@
-# This is a basic workflow to help you get started with Actions
-name: CI-build-and-push-image-for-dotnetapp
+name: ci
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
-    paths-ignore:
-      - README.md
-      - .vscode/**
-      - .gitignore
-  pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - README.md
-      - .vscode/**
-      - .gitignore
-      
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    branches: master
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
- docker:
+  docker-image:
     runs-on: ubuntu-latest
     steps:
       -
@@ -45,6 +28,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Microservice/Dockerfile
+          file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/dockerfordotnetapi:latest, ${{ secrets.DOCKERHUB_USERNAME }}/dockerfordotnetapi:${{ github.run_number }}
+          tags: shivathebravo/microservice:latest
