@@ -16,8 +16,4 @@ jobs:
     - name: Set up Docker Compose
       run: docker-compose version
 
-    - name: Build and push Docker image
-      run: |
-        docker build -t shivathebravo/apigateway:latest .
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push shivathebravo/microservice:latest
+
