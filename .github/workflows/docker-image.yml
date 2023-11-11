@@ -23,10 +23,10 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build "BlazorServerWebUI.csproj" -c Release -o /app/build
+        run: dotnet build "./BlazorServerWebUI/BlazorServerWebUI.csproj" -c Release -o /app/build
 
 
       - name: dotnet publish
-        run: dotnet publish "BlazorServerWebUI.csproj" -c Release -o /app/publish
+        run: dotnet publish "./BlazorServerWebUI/BlazorServerWebUI.csproj" -c Release -o /app/publish
 
       
