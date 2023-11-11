@@ -1,34 +1,33 @@
-name: Backend Deployment
+name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  deploy:
+  build:
+
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Build the Docker image
-      working-directory: BlazorServerWebUI
-      run: docker build . -t docker-hub-username/container-name:latest
-
-    - name: Log into Docker Hub
-      uses: docker/login-action@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Push the image to Docker Hub
-      run: docker push docker-hub-username/container-name
-
-    - name: Pull the image to VM
-      uses: appleboy/ssh-action@v1.0.0
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish BlazorServerWebUI/BlazorServerWebUI.csproj -c Release -o website
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: 
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/microservice:latest
-          docker run -d -p 80:80 --name hello ${{ secrets.DOCKERHUB_USERNAME }}/microservice:latest
+        name: website
+        path: SimpleFeedReader/website/**
+        if-no-files-found: error
