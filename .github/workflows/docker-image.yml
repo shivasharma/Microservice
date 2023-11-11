@@ -1,25 +1,24 @@
-name: .NET
+name: Backend Deployment
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
-  build:
-
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+    
+    - name: Build the Docker image
+      working-directory: ./BlazorServerWebUI
+      run: docker build . -t shivathebravo/microservice:latest
+
+    - name: Log into Docker Hub
+      uses: docker/login-action@v2
       with:
-        dotnet-version: 7
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Push the image to Docker Hub
+      run: docker push shivathebravo/microservice
