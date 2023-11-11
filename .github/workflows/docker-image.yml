@@ -24,6 +24,6 @@ jobs:
 
     - name: Build and push Docker images
       run: |
-        docker build -t shivathebravo/microservice:latest .
+        docker build -t shivathebravo/microservice:latest
         docker push shivathebravo/microservice:latest
         
