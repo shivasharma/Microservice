@@ -20,7 +20,7 @@ jobs:
 
     - name: Build the Docker image
       run: |
-        docker build -t shivathebravo/microservice:latest .
+        docker build -t shivathebravo/microservice:latest -f /APIGAteway/Dockerfile .
       env:
         ASPNETCORE_ENVIRONMENT: Production
 
