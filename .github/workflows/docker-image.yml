@@ -1,28 +1,47 @@
-name: CI/CD
+# This is a basic workflow to help you get started with Actions
+name: CI-build-and-push-image-for-dotnetapp
 
-on: push
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - README.md
+      - .vscode/**
+      - .gitignore
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - README.md
+      - .vscode/**
+      - .gitignore
+      
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-    name: Building image
+ docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      -
+        name: Checkout
         uses: actions/checkout@v2
-
-      - name: Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
         
-      - name: DockerHub login
+      - 
+       name: Start containers
+       run: docker-compose -f "docker-compose.yml" up -d --build
+      
+      -
+        name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
-      - name: Build and push
+      -
+        name: Build and push
         uses: docker/build-push-action@v2
         with:
-          run: docker-compose up -d
           push: true
-          tags: shivathebravo/microservice:latest  # Please change the username here
+          tags: ${{ secrets.DOCKER_USERNAME }}/shivathebravo:latest, ${{ secrets.DOCKER_USERNAME }}/shivathebravo:${{ github.run_number }}
